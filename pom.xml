@@ -1,0 +1,88 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+             http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.kinumz.booking</groupId>
+  <artifactId>booking-app</artifactId>
+  <version>0.1.0</version>
+  <packaging>pom</packaging>
+
+
+  <modules>
+    <module>core-module</module>
+    <module>order-module</module>
+    <module>payment-module</module>
+    <module>inventory-module</module>
+    <module>orchestrator-service</module>
+    <module>admin-module</module>
+  </modules>
+
+  <properties>
+    <java.version>21</java.version>
+    <spring.boot.version>3.5.6</spring.boot.version>
+    <camunda.version>7.22.0</camunda.version>
+    <liquibase.version>4.30.0</liquibase.version>
+    <maven.compiler.release>21</maven.compiler.release>
+  </properties>
+
+  <repositories>
+    <repository>
+      <id>camunda-bpm-nexus</id>
+      <url>https://app.camunda.com/nexus/content/repositories/public/</url>
+    </repository>
+  </repositories>
+
+  <dependencies>
+    <!-- Lombok for all modules (annotation processing) -->
+    <dependency>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+      <version>1.18.40</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <!-- (optional) add this so child modules inherit junit/test deps etc. -->
+  </dependencies>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-dependencies</artifactId>
+        <version>${spring.boot.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <version>3.11.0</version>
+          <configuration>
+            <release>${java.version}</release>
+            <encoding>UTF-8</encoding>
+
+            <!-- ensure consistent encoding -->
+            <encoding>UTF-8</encoding>
+
+            <!-- explicitly configure annotation processors (Lombok) -->
+            <annotationProcessorPaths>
+              <path>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>1.18.40</version>
+              </path>
+            </annotationProcessorPaths>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
+
+</project>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="
+          http://www.liquibase.org/xml/ns/dbchangelog
+          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+    <changeSet id="100-seed-camunda-users" author="kinumz">
+        <sql>
+            INSERT INTO act_id_group (id_, name_, type_) VALUES ('camunda-admin','camunda-admin','SYSTEM') ON CONFLICT DO NOTHING;
+            INSERT INTO act_id_user (id_, first_, last_, email_) VALUES ('demo','Demo','User','demo@example.com') ON CONFLICT DO NOTHING;
+            INSERT INTO act_id_membership (user_id_, group_id_) VALUES ('demo','camunda-admin') ON CONFLICT DO NOTHING;
+        </sql>
+    </changeSet>
+</databaseChangeLog>

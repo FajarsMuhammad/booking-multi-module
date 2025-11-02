@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_1" targetNamespace="http://camunda.org/examples">
+  <bpmn:process id="orderSagaProcess" name="Order Saga Orchestration" isExecutable="true" camunda:historyTimeToLive="180">
+    <!-- Start -->
+    <bpmn:startEvent id="StartEvent" name="Start Order Saga">
+      <bpmn:outgoing>Flow_Start_CreateOrder</bpmn:outgoing>
+    </bpmn:startEvent>
+    <!-- Step 1: Create Order -->
+    <bpmn:serviceTask id="Task_CreateOrder" name="Create Order" camunda:delegateExpression="${createOrderDelegate}">
+      <bpmn:incoming>Flow_Start_CreateOrder</bpmn:incoming>
+      <bpmn:outgoing>Flow_CreateOrder_Payment</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <!-- Compensation: Cancel Order -->
+    <bpmn:serviceTask id="Task_CancelOrder" name="Cancel Order" camunda:delegateExpression="${cancelOrderDelegate}" isForCompensation="true"/>
+    <!-- Step 2: Process Payment -->
+    <bpmn:serviceTask id="Task_Payment" name="Process Payment" camunda:delegateExpression="${processPaymentDelegate}">
+      <bpmn:incoming>Flow_CreateOrder_Payment</bpmn:incoming>
+      <bpmn:outgoing>Flow_Payment_Inventory</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <!-- Compensation: Refund Payment -->
+    <bpmn:serviceTask id="Task_RefundPayment" name="Refund Payment" camunda:delegateExpression="${refundPaymentDelegate}" isForCompensation="true"/>
+    <!-- Step 3: Reserve Stock -->
+    <bpmn:serviceTask id="Task_Inventory" name="Reserve Stock" camunda:delegateExpression="${reserveStockDelegate}">
+      <bpmn:incoming>Flow_Payment_Inventory</bpmn:incoming>
+      <bpmn:outgoing>Flow_Inventory_End</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <!-- Compensation: Release Stock -->
+    <bpmn:serviceTask id="Task_ReleaseStock" name="Release Stock" camunda:delegateExpression="${releaseStockDelegate}" isForCompensation="true"/>
+    <!-- End -->
+    <bpmn:endEvent id="EndEvent" name="Saga Completed">
+      <bpmn:incoming>Flow_Inventory_End</bpmn:incoming>
+    </bpmn:endEvent>
+    <!-- Flows -->
+    <bpmn:sequenceFlow id="Flow_Start_CreateOrder" sourceRef="StartEvent" targetRef="Task_CreateOrder"/>
+    <bpmn:sequenceFlow id="Flow_CreateOrder_Payment" sourceRef="Task_CreateOrder" targetRef="Task_Payment"/>
+    <bpmn:sequenceFlow id="Flow_Payment_Inventory" sourceRef="Task_Payment" targetRef="Task_Inventory"/>
+    <bpmn:sequenceFlow id="Flow_Inventory_End" sourceRef="Task_Inventory" targetRef="EndEvent"/>
+    <!-- Compensation Triggers -->
+    <bpmn:association id="Assoc_CancelOrder" sourceRef="Task_CreateOrder" targetRef="Task_CancelOrder" associationDirection="One"/>
+    <bpmn:association id="Assoc_RefundPayment" sourceRef="Task_Payment" targetRef="Task_RefundPayment" associationDirection="One"/>
+    <bpmn:association id="Assoc_ReleaseStock" sourceRef="Task_Inventory" targetRef="Task_ReleaseStock" associationDirection="One"/>
+  </bpmn:process>
+  <!-- Diagram Layout -->
+  <bpmndi:BPMNDiagram id="BPMNDiagram_OrderSaga">
+    <bpmndi:BPMNPlane id="BPMNPlane_OrderSaga" bpmnElement="orderSagaProcess">
+      <!-- Main Line -->
+      <bpmndi:BPMNShape id="StartEvent_di" bpmnElement="StartEvent">
+        <dc:Bounds x="150" y="200" width="36" height="36"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_CreateOrder_di" bpmnElement="Task_CreateOrder">
+        <dc:Bounds x="250" y="180" width="120" height="76"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_Payment_di" bpmnElement="Task_Payment">
+        <dc:Bounds x="420" y="180" width="120" height="76"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_Inventory_di" bpmnElement="Task_Inventory">
+        <dc:Bounds x="590" y="180" width="120" height="76"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_di" bpmnElement="EndEvent">
+        <dc:Bounds x="760" y="200" width="36" height="36"/>
+      </bpmndi:BPMNShape>
+      <!-- Compensation Tasks (below main flow) -->
+      <bpmndi:BPMNShape id="Task_CancelOrder_di" bpmnElement="Task_CancelOrder">
+        <dc:Bounds x="250" y="300" width="120" height="60"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_RefundPayment_di" bpmnElement="Task_RefundPayment">
+        <dc:Bounds x="420.0" y="300.0" width="120" height="60"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_ReleaseStock_di" bpmnElement="Task_ReleaseStock">
+        <dc:Bounds x="590" y="300" width="120" height="60"/>
+      </bpmndi:BPMNShape>
+      <!-- Main Flows -->
+      <bpmndi:BPMNEdge id="Flow_Start_CreateOrder_di" bpmnElement="Flow_Start_CreateOrder">
+        <di:waypoint x="186" y="218"/>
+        <di:waypoint x="250" y="218"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_CreateOrder_Payment_di" bpmnElement="Flow_CreateOrder_Payment">
+        <di:waypoint x="370" y="218"/>
+        <di:waypoint x="420" y="218"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Payment_Inventory_di" bpmnElement="Flow_Payment_Inventory">
+        <di:waypoint x="540" y="218"/>
+        <di:waypoint x="590" y="218"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Inventory_End_di" bpmnElement="Flow_Inventory_End">
+        <di:waypoint x="710" y="218"/>
+        <di:waypoint x="760" y="218"/>
+      </bpmndi:BPMNEdge>
+      <!-- Compensation Associations (dotted arrows) -->
+      <bpmndi:BPMNEdge id="Assoc_CancelOrder_di" bpmnElement="Assoc_CancelOrder">
+        <di:waypoint x="310" y="256"/>
+        <di:waypoint x="310" y="300"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Assoc_RefundPayment_di" bpmnElement="Assoc_RefundPayment">
+        <di:waypoint x="480" y="256"/>
+        <di:waypoint x="480" y="300"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Assoc_ReleaseStock_di" bpmnElement="Assoc_ReleaseStock">
+        <di:waypoint x="650" y="256"/>
+        <di:waypoint x="650" y="300"/>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

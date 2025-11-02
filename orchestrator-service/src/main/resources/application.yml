@@ -1,0 +1,64 @@
+server:
+  port: 8080
+  error:
+    whitelabel:
+      enabled: false
+
+spring:
+  application:
+    name: orchestrator-service
+  datasource:
+    url: jdbc:postgresql://localhost:5432/booking_db
+    username:
+    password:
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      connection-timeout: 30000
+      maximum-pool-size: 10
+      initialization-fail-timeout: -1
+
+  jpa:
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate.dialect: org.hibernate.dialect.PostgreSQLDialect
+    open-in-view: false
+
+  liquibase:
+    enabled: true
+    change-log: classpath:/db/changelog/db.changelog-master.xml
+
+  security:
+    user:
+      name: admin
+      password: admin123
+
+camunda:
+  bpm:
+    database:
+      type: postgres
+      schema-update: true
+    history-level: FULL
+    metrics:
+      enabled: false
+    default-history-time-to-live: 180
+    generic-properties:
+      properties:
+        enforceHistoryTimeToLive: false
+    auto-deployment-enabled: true
+    auto-deployment-location: classpath*:processes/
+    admin-user:
+      id: demo
+      password: demo
+      firstName: Demo
+      filter:
+        create: All tasks
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus,metrics
+  endpoint:
+    health:
+      show-details: always

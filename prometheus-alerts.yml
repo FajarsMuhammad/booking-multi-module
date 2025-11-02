@@ -1,0 +1,10 @@
+groups:
+  - name: booking_alerts
+    rules:
+      - alert: CamundaJobFailures
+        expr: increase(camunda_job_failed_total[5m]) > 0
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Camunda job failures detected in the last 5 minutes"

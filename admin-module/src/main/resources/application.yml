@@ -1,0 +1,21 @@
+server:
+  port: 8081
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/booking_db
+    driver-class-name: org.postgresql.Driver
+    username:
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: none
+
+camunda:
+  bpm:
+    auto-deployment-enabled: false
+    admin-user:
+      id: demo
+      password: demo
+      firstName: Demo
+      filter:
+        create: All tasks

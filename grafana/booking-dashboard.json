@@ -1,0 +1,21 @@
+{
+  "dashboard": {
+    "title": "Booking App Overview",
+    "panels": [
+      {
+        "type": "text",
+        "title": "Instructions",
+        "gridPos": {
+          "h": 2,
+          "w": 24,
+          "x": 0,
+          "y": 0
+        },
+        "options": {
+          "content": "This dashboard shows basic metrics"
+        }
+      }
+    ]
+  },
+  "overwrite": true
+}

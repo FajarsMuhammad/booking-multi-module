@@ -1,0 +1,7 @@
+# Project exclude paths
+/admin-module/target/
+/core-module/target/
+/inventory-module/target/
+/orchestrator-service/target/
+/order-module/target/
+/payment-module/target/
