@@ -19,7 +19,7 @@ This project is a multi-module booking system consisting of several microservice
 ## Planned Features
 1. **Authentication & Authorization**
    - Implement JWT-based authentication on orchestrator-service.
-   - Secure REST APIs and microservice communication using JWT tokens.
+   - Secure REST APIs JWT tokens.
    - Add user roles and permissions.
    - Integrate with Spring Security for authentication flows.
 2. **API Documentation**
